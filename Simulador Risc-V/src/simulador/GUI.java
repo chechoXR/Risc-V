@@ -1,0 +1,249 @@
+package simulador;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import db.ConnectionLite;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import registros.Registros;
+
+/**
+ * Esta clase se encarga de crear y mostrar la interfaz gráfica de la aplicación
+ * 
+ * 
+ * @author Sergio Ramirez
+ * 
+ * @version 1.0
+ * 
+ * 
+ * 
+ *
+ */
+
+public class GUI extends Application implements Runnable {
+
+	private static File file;
+//	private FileReader fileReader;
+//	private static BufferedReader br;
+	public static boolean built=false;
+	private final int layoutX = 600;
+	private final int layoutY = 400;
+	private TableView<Registros> vistaRegistros;
+	private ArrayList<Registros> Registros;
+	
+
+
+	public GUI() {
+		
+	}
+
+	
+	@Override
+	public synchronized void run() {
+		Application.launch();
+	}
+
+	
+	
+	/**
+	 * Meodo que se encarga de dibujar y organizar los componentes gráficos del proyecto
+	 */
+	@Override
+	public void start(Stage st) throws Exception {
+		
+		establecerConexión();
+		
+		//Ventana contenedora
+		BorderPane window = new BorderPane();
+//		window.setMinSize(layoutY, layoutY);
+		
+		//Parte central
+		TextArea editorTexto = new TextArea();
+		editorTexto.setWrapText(true);
+		editorTexto.setText(leerTextoArchivo());
+		Tab editorDefecto = new Tab(this.file.getName(), editorTexto);
+		TabPane editor = new TabPane(editorDefecto);
+		
+//		editorTexto.selectRange(0,editorTexto.);
+		
+		
+		//Parte derecha
+		getVistaRegistros();
+
+		
+		
+		
+		//Parte Inferior
+		//Ver operación en curso en binario y hexa
+		//TextArea
+		
+		
+		//Barras parte superior y botones guardado
+		BorderPane barrasSuperior = new BorderPane();
+		MenuBar bar = new MenuBar();
+		
+		Menu menuFile = new Menu("Archivo");
+		Menu menuEjecutar= new Menu("Ejecutar");
+		Menu menuAyuda = new Menu("Ayuda");
+		
+		bar.getMenus().addAll(menuFile,menuEjecutar,menuAyuda);
+		barrasSuperior.setTop(bar);
+		
+		//Barra con botones para interactuar
+
+		
+		
+		
+		
+		window.setTop(barrasSuperior);
+		window.setCenter(editor);
+		window.setRight(vistaRegistros);
+		window.setLeft(null);
+		window.setBottom(null);
+		
+		
+		
+		Scene sc = new Scene(window);
+		st.setTitle("Staurn Risc-V");
+//		st.setResizable(false);
+//		st.setMaximized(true);
+		st.setScene(sc);
+		st.centerOnScreen();
+		st.show();
+		
+
+	}
+
+/**
+ * Este método lee el archivo que contiene el código a ejecutar y lo carga a una variable Stgring
+ * 
+ * @return Un String con el texto del archivo
+ * @throws IOException
+ */
+	
+	private String leerTextoArchivo() throws IOException {
+//		if(fileReader!=null) {
+			String text = "";
+			final String jump="\n";
+			FileReader fileReader = new FileReader(file);
+			BufferedReader br = new BufferedReader(fileReader);
+			
+			String read = br.readLine();
+			
+			while (read != null ) { 
+				try {
+					text += read + jump;
+					read=br.readLine();
+					
+				} catch (Exception e) {
+					System.err.println("fin archivo");
+				}
+			}
+
+			br.close();
+			return text;
+//		}
+//		else {
+//			System.err.println("No hay archivo cargado para mostrar");
+//		}
+//		return "";
+	}
+
+	/**
+	 * Con este método se carga el archivo que contiene el código a ejecutar
+	 * @param file
+	 * @throws IOException
+	 */
+	
+	public void loadFile(File file) throws IOException {
+		
+		if(file!=null) {
+			this.file=file;
+//			fileReader = new FileReader(file);
+//			built=true;
+//			br = new BufferedReader(fileReader);
+//			System.out.println(br.readLine());
+			
+		}
+		else
+			System.err.println("Archivo nulo");
+
+	}
+
+	
+	/**
+	 * Este metodo construye la vista de los registros en un TableView de acuerdo al ArrayList
+	 * de los registros.
+	 * 
+	 * @return TableView con los registros
+	 */
+	private TableView<Registros> getVistaRegistros() {
+		
+		vistaRegistros = new TableView<Registros>();
+		vistaRegistros.setMinHeight(layoutY);
+		vistaRegistros.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		vistaRegistros.setEditable(true);
+		TableColumn registro = new TableColumn("Registro");
+		TableColumn nombreRegistro = new TableColumn("Nombre");
+		TableColumn valorRegistro = new TableColumn("Valor");
+		
+		registro.setCellValueFactory(new PropertyValueFactory<Registros, String>("Register"));
+		nombreRegistro.setCellValueFactory(new PropertyValueFactory<Registros, String>("ABI_Name"));
+		valorRegistro.setCellValueFactory(new PropertyValueFactory<Registros, String>("val"));
+		
+		
+		vistaRegistros.getColumns().addAll(registro,nombreRegistro, valorRegistro);
+		
+		
+		ObservableList<Registros> listaRegistros = FXCollections.observableArrayList(Registros);
+	
+		
+			
+		vistaRegistros.setItems(listaRegistros);
+		
+		return vistaRegistros;
+	}
+	
+	/**
+	 * Este metodo estabece la conexión a la base de datos para obtener los datos de los 
+	 * registros, y asigna los valores al ArrayList.
+	 */
+	private void establecerConexión() {
+		ConnectionLite con = new ConnectionLite();
+		this.Registros = con.GetRegisters();
+		
+	}
+	
+	
+	/**
+	 * Esta funcion debe ser llamada por la clase de simulador (SIM) para actualizar los registros
+	 * en la interfaz grpafica 
+	 */
+	public void actualizarRegistros(ArrayList<Registros> Registros) {
+		this.Registros=Registros;
+		getVistaRegistros();
+		
+	}
+	
+}
