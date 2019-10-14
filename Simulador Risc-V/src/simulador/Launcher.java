@@ -19,17 +19,19 @@ import java.io.IOException;
 
 public class Launcher {
 	private static File file;
+	private static GUI g;
+	private static Sim s;
 	
-	public static void main(String[] args) throws IOException {
+	public synchronized static void main(String[] args) throws IOException {
 		
 		
 		file = new File("/root/Escritorio/file");
 		
-		Sim s = new Sim(file);
+		s = new Sim(file);
 		Thread S = new Thread(s);
 		S.start();
 		
-		GUI g = new GUI();
+		g = new GUI();
 		g.loadFile(file);
 
 		
@@ -43,6 +45,17 @@ public class Launcher {
 	public File getFile() {
 		return file;
 	}
+
+	public static GUI getG() {
+		return g;
+	}
+
+	public static Sim getS() {
+		return s;
+	}
+	
+	
+	
 	
 
 	

@@ -30,7 +30,7 @@ public class Sim implements Runnable{
 		FileReader fileReader = new FileReader(file);
 		BufferedReader br = new BufferedReader(fileReader);
 		
-		System.out.println(registros.toString());
+		System.out.println("Simulador construido.");
 		
 		
 		
@@ -41,17 +41,15 @@ public class Sim implements Runnable{
 	
 	@Override
 	public synchronized void run() {
-
-		for(int i=0; i<200;i++) {
-			System.out.println(i);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		
+		
+		
+	}
+	
+	public void print() {
+		ArrayList<Registros> Registros = new ArrayList<Registros>();
+		Registros.add(new Registros("asd", "fgh", "jkl", "ñzx"));
+		Launcher.getG().actualizarRegistros(Registros);
 	}
 
 }

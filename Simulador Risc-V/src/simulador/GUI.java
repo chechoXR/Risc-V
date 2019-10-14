@@ -9,11 +9,14 @@ import db.ConnectionLite;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -49,6 +52,7 @@ public class GUI extends Application implements Runnable {
 	public static boolean built=false;
 	private final int layoutX = 600;
 	private final int layoutY = 400;
+	private static BorderPane window;
 	private TableView<Registros> vistaRegistros;
 	private ArrayList<Registros> Registros;
 	
@@ -75,7 +79,7 @@ public class GUI extends Application implements Runnable {
 		establecerConexión();
 		
 		//Ventana contenedora
-		BorderPane window = new BorderPane();
+		window = new BorderPane();
 //		window.setMinSize(layoutY, layoutY);
 		
 		//Parte central
@@ -106,6 +110,18 @@ public class GUI extends Application implements Runnable {
 		Menu menuFile = new Menu("Archivo");
 		Menu menuEjecutar= new Menu("Ejecutar");
 		Menu menuAyuda = new Menu("Ayuda");
+		
+		MenuItem run = new MenuItem("Run");
+		run.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+				Launcher.getS().print();
+				
+			}
+		});
+		menuEjecutar.getItems().add(run);
 		
 		bar.getMenus().addAll(menuFile,menuEjecutar,menuAyuda);
 		barrasSuperior.setTop(bar);
@@ -200,6 +216,7 @@ public class GUI extends Application implements Runnable {
 	 */
 	private TableView<Registros> getVistaRegistros() {
 		
+		
 		vistaRegistros = new TableView<Registros>();
 		vistaRegistros.setMinHeight(layoutY);
 		vistaRegistros.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -221,7 +238,6 @@ public class GUI extends Application implements Runnable {
 		
 			
 		vistaRegistros.setItems(listaRegistros);
-		
 		return vistaRegistros;
 	}
 	
@@ -243,6 +259,7 @@ public class GUI extends Application implements Runnable {
 	public void actualizarRegistros(ArrayList<Registros> Registros) {
 		this.Registros=Registros;
 		getVistaRegistros();
+		this.window.setRight(vistaRegistros);
 		
 	}
 	
