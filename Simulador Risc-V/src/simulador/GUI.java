@@ -23,11 +23,13 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import registros.Registros;
 
@@ -53,6 +55,7 @@ public class GUI extends Application implements Runnable {
 	private final int layoutX = 600;
 	private final int layoutY = 400;
 	private static BorderPane window;
+	private static TextArea console;
 	private TableView<Registros> vistaRegistros;
 	private ArrayList<Registros> Registros;
 	
@@ -130,13 +133,17 @@ public class GUI extends Application implements Runnable {
 
 		
 		
+		//Abajo log
+		vistaConsola();
+		
+		
 		
 		
 		window.setTop(barrasSuperior);
 		window.setCenter(editor);
 		window.setRight(vistaRegistros);
 		window.setLeft(null);
-		window.setBottom(null);
+		window.setBottom(console);
 		
 		
 		
@@ -221,9 +228,11 @@ public class GUI extends Application implements Runnable {
 		vistaRegistros.setMinHeight(layoutY);
 		vistaRegistros.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		vistaRegistros.setEditable(true);
+		
 		TableColumn registro = new TableColumn("Registro");
 		TableColumn nombreRegistro = new TableColumn("Nombre");
 		TableColumn valorRegistro = new TableColumn("Valor");
+		
 		
 		registro.setCellValueFactory(new PropertyValueFactory<Registros, String>("Register"));
 		nombreRegistro.setCellValueFactory(new PropertyValueFactory<Registros, String>("ABI_Name"));
@@ -234,11 +243,36 @@ public class GUI extends Application implements Runnable {
 		
 		
 		ObservableList<Registros> listaRegistros = FXCollections.observableArrayList(Registros);
-	
+		
 		
 			
 		vistaRegistros.setItems(listaRegistros);
 		return vistaRegistros;
+	}
+	
+	/**
+	 * Esta funcion es llamada para construir y configurar la vista de la consola de eventos
+	 */
+	private void vistaConsola() {
+		
+		this.console = new TextArea();
+		console.setEditable(false);
+		console.setFont(Font.font(13));
+		console.setMaxHeight(100);
+		console.setWrapText(true);
+				
+	}
+	
+	/**
+	 * Esta funcion permite actualizar el texto de la consola
+	 * 
+	 * @param s
+	 */
+	private void actualizarConsola(String s) {
+		if(this.console.getText().equals(""))
+			this.console.setText(this.console.getText() + s);
+		else
+			this.console.setText(this.console.getText() + "\n" + s);
 	}
 	
 	/**
@@ -262,5 +296,7 @@ public class GUI extends Application implements Runnable {
 		this.window.setRight(vistaRegistros);
 		
 	}
+	
+	
 	
 }

@@ -44,6 +44,7 @@ public class Sim implements Runnable{
 		
 		
 		
+		
 	}
 	
 	public void print() {
@@ -51,5 +52,18 @@ public class Sim implements Runnable{
 		Registros.add(new Registros("asd", "fgh", "jkl", "ñzx"));
 		Launcher.getG().actualizarRegistros(Registros);
 	}
+	
+	private String ejecutar(String instruccion) {
+		
+		
+		
+		
+		return "";
+		
+	}
+	
+	
+	
+	
 
 }
