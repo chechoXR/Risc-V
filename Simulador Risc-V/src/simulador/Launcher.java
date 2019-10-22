@@ -12,8 +12,9 @@ import java.io.IOException;
 	 * 
 	 * @version 1.0
 	 * 
-	 * 
-	 * 
+	 * Registros			https://en.wikichip.org/wiki/risc-v/registers
+	 * ISA					https://rv8.io/isa.html
+	 * Especificaciones 	https://riscv.org/specifications/
 	 *
 	 */
 

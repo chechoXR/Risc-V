@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.imageio.ImageReader;
+
 import db.ConnectionLite;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -25,10 +29,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import registros.Registros;
@@ -121,6 +128,7 @@ public class GUI extends Application implements Runnable {
 			public void handle(ActionEvent arg0) {
 				
 				Launcher.getS().print();
+				Launcher.getS().ejecutar();
 				
 			}
 		});
@@ -131,7 +139,37 @@ public class GUI extends Application implements Runnable {
 		
 		//Barra con botones para interactuar
 
+		HBox botonera = new HBox();
 		
+		File archivoPlay = new File("src/res/play.png");
+		Image imagenPlay = new Image(archivoPlay.toURI().toString());
+		ImageView visorImagenPlay = new ImageView(imagenPlay);
+		
+		Button botonEjecutar = new Button("",visorImagenPlay);
+		botonEjecutar.setFocusTraversable(false);
+		
+		File archivoStop = new File("src/res/stop.png");
+		Image imagenStop = new Image(archivoStop.toURI().toString());
+		ImageView visorImagenStop = new ImageView(imagenStop);
+		
+		Button botonParar = new Button("",visorImagenStop);
+		botonParar.setFocusTraversable(false);
+		
+		
+//		botonEjecutar.setShape(new Circle(1));
+		
+		botonEjecutar.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+				Launcher.getS().ejecutar();
+				
+			}
+		});
+		
+		botonera.getChildren().addAll(botonEjecutar,botonParar);
+		barrasSuperior.setCenter(botonera);
 		
 		//Abajo log
 		vistaConsola();
@@ -260,7 +298,7 @@ public class GUI extends Application implements Runnable {
 		console.setFont(Font.font(13));
 		console.setMaxHeight(100);
 		console.setWrapText(true);
-				
+		actualizarConsola("Esta es la consola");	
 	}
 	
 	/**
@@ -268,7 +306,20 @@ public class GUI extends Application implements Runnable {
 	 * 
 	 * @param s
 	 */
-	private void actualizarConsola(String s) {
+	void actualizarConsola(String s) {
+		if(this.console.getText().equals(""))
+			this.console.setText(this.console.getText() + s);
+		else
+			this.console.setText(this.console.getText() + "\n" + s);
+	}
+	
+	
+	/**
+	 * Esta funcion permite actualizar el texto de la consola con un color en especifico
+	 * 
+	 * @param s
+	 */
+	private void actualizarConsola(String s,String color) {
 		if(this.console.getText().equals(""))
 			this.console.setText(this.console.getText() + s);
 		else
