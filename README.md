@@ -1,11 +1,13 @@
 # Risc-V
 Simulador de Risc V en JAVA
 
-#File Sample
+# File Sample
 
- #######################################################
- #Comentarios van con "#" al principio
- #######################################################
+#######################################################
+
+#Comentarios van con "#" al principio
+
+#######################################################
 
 #Operaciones tipo "R"
 add t0,t0,t0
