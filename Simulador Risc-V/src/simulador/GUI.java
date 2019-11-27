@@ -1,14 +1,12 @@
 package simulador;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import javax.imageio.ImageReader;
-
 import db.ConnectionLite;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -17,26 +15,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import registros.Registros;
 
@@ -59,13 +52,12 @@ public class GUI extends Application implements Runnable {
 //	private FileReader fileReader;
 //	private static BufferedReader br;
 	public static boolean built=false;
-	private final int layoutX = 600;
 	private final int layoutY = 400;
 	private static BorderPane window;
 	private static TextArea console;
 	private TableView<Registros> vistaRegistros;
 	private ArrayList<Registros> Registros;
-	
+	private TabFile tabsFiles;
 
 
 	public GUI() {
@@ -86,18 +78,24 @@ public class GUI extends Application implements Runnable {
 	@Override
 	public void start(Stage st) throws Exception {
 		
-		establecerConexión();
+		establecerConexion();
 		
 		//Ventana contenedora
 		window = new BorderPane();
 //		window.setMinSize(layoutY, layoutY);
 		
 		//Parte central
+		
 		TextArea editorTexto = new TextArea();
 		editorTexto.setWrapText(true);
-		editorTexto.setText(leerTextoArchivo());
+		editorTexto.setText(leerTextoArchivo(this.file));
+		
+		
 		Tab editorDefecto = new Tab(this.file.getName(), editorTexto);
 		TabPane editor = new TabPane(editorDefecto);
+		
+		tabsFiles = new TabFile();
+		tabsFiles.add(editorDefecto, this.file);
 		
 //		editorTexto.selectRange(0,editorTexto.);
 		
@@ -127,12 +125,78 @@ public class GUI extends Application implements Runnable {
 			@Override
 			public void handle(ActionEvent arg0) {
 				
-				Launcher.getS().print();
-				Launcher.getS().ejecutar();
+				File fileTemp = tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem());
+				try {
+					BufferedWriter overwrite = new BufferedWriter(new FileWriter(fileTemp));
+					TextArea ta = (TextArea) editor.getSelectionModel().getSelectedItem().getContent();
+					overwrite.write(ta.getText());
+					overwrite.flush();
+					overwrite.close();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+				
+				Launcher.getS().ejecutar(tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem()));
+				
+			
+			}
+		});
+		
+		
+		MenuItem save = new MenuItem("Save");
+		save.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+			
+				File file = tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem());
+				try {
+					BufferedWriter overwrite = new BufferedWriter(new FileWriter(file));
+					TextArea ta = (TextArea) editor.getSelectionModel().getSelectedItem().getContent();
+					overwrite.write(ta.getText());
+					overwrite.flush();
+					overwrite.close();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+				
 				
 			}
 		});
+		
+		MenuItem open = new MenuItem("Open");
+		
+		open.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				File openedFile = new File(new FileChooser().showOpenDialog(st).getAbsolutePath());
+				
+				TextArea editorT = new TextArea();
+				editorT.setWrapText(true);
+				try {
+					editorT.setText(leerTextoArchivo(openedFile));
+				} catch (IOException e) {
+				}
+				
+				Tab openedTab = new Tab(openedFile.getName(), editorT);
+				editor.getTabs().add(openedTab);
+				tabsFiles.add(openedTab, openedFile);
+				
+				
+			}
+		});
+		
+		menuFile.getItems().addAll(open,save);
+		
+		
 		menuEjecutar.getItems().add(run);
+		
 		
 		bar.getMenus().addAll(menuFile,menuEjecutar,menuAyuda);
 		barrasSuperior.setTop(bar);
@@ -156,6 +220,14 @@ public class GUI extends Application implements Runnable {
 		botonParar.setFocusTraversable(false);
 		
 		
+		File archivoSave = new File("src/res/save.png");
+		Image imagenSave = new Image(archivoSave.toURI().toString());
+		ImageView visorImagenSave = new ImageView(imagenSave);
+		
+		Button botonGuardar = new Button("",visorImagenSave);
+		botonGuardar.setFocusTraversable(false);
+		
+		
 //		botonEjecutar.setShape(new Circle(1));
 		
 		botonEjecutar.setOnAction(new EventHandler<ActionEvent>() {
@@ -163,12 +235,47 @@ public class GUI extends Application implements Runnable {
 			@Override
 			public void handle(ActionEvent arg0) {
 				
-				Launcher.getS().ejecutar();
+				File fileTemp = tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem());
+				try {
+					BufferedWriter overwrite = new BufferedWriter(new FileWriter(fileTemp));
+					TextArea ta = (TextArea) editor.getSelectionModel().getSelectedItem().getContent();
+					overwrite.write(ta.getText());
+					overwrite.flush();
+					overwrite.close();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+				
+				Launcher.getS().ejecutar(tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem()));
 				
 			}
 		});
 		
-		botonera.getChildren().addAll(botonEjecutar,botonParar);
+		
+		botonGuardar.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				File file = tabsFiles.getFileFromTab(editor.getSelectionModel().getSelectedItem());
+				try {
+					BufferedWriter overwrite = new BufferedWriter(new FileWriter(file));
+					TextArea ta = (TextArea) editor.getSelectionModel().getSelectedItem().getContent();
+					overwrite.write(ta.getText());
+					overwrite.flush();
+					overwrite.close();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+				
+			}
+		});
+		
+		botonera.getChildren().addAll(botonEjecutar,botonParar, botonGuardar);
 		barrasSuperior.setCenter(botonera);
 		
 		//Abajo log
@@ -203,7 +310,7 @@ public class GUI extends Application implements Runnable {
  * @throws IOException
  */
 	
-	private String leerTextoArchivo() throws IOException {
+	private String leerTextoArchivo(File file) throws IOException {
 //		if(fileReader!=null) {
 			String text = "";
 			final String jump="\n";
@@ -330,7 +437,7 @@ public class GUI extends Application implements Runnable {
 	 * Este metodo estabece la conexión a la base de datos para obtener los datos de los 
 	 * registros, y asigna los valores al ArrayList.
 	 */
-	private void establecerConexión() {
+	private void establecerConexion() {
 		ConnectionLite con = new ConnectionLite();
 		this.Registros = con.GetRegisters();
 		

@@ -30,7 +30,6 @@ public class Sim implements Runnable{
 		ConnectionLite con = new ConnectionLite();
 		this.registros= con.GetRegisters();
 		this.file= file;
-		FileReader fileReader = new FileReader(file);
 //		BufferedReader br = new BufferedReader(fileReader);
 
 		System.out.println("Simulador construido.");
@@ -56,7 +55,7 @@ public class Sim implements Runnable{
 	}
 	
 	
-	public void ejecutar() {
+	public void ejecutar(File file) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String read = br.readLine();
@@ -82,12 +81,12 @@ public class Sim implements Runnable{
 		String instruccion = st.nextToken();
 		String complemento = st.nextToken();
 
-		instruccion.toUpperCase();
-		
+		instruccion = instruccion.toUpperCase();
+		System.out.println(instruccion);
 		switch (instruccion) {
 		case "LUI":
-			System.out.println("Instrucción " + instruccion + " ejecutada");
-			Launcher.getG().actualizarConsola("Instrucción " + instruccion + " ejecutada");
+			System.out.println("Instruccion " + instruccion + " ejecutada");
+			Launcher.getG().actualizarConsola("Instruccion " + instruccion + " ejecutada");
 			break;
 
 		case "AUIPC":
@@ -161,6 +160,23 @@ public class Sim implements Runnable{
 
 			break;
 		case "ADDI":
+			StringTokenizer staux = new StringTokenizer(complemento,",");
+			String r1 = staux.nextToken();
+			String r2 = staux.nextToken();
+			String imm = staux.nextToken();
+			int sum1 = 0;
+			int sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1))
+					sum1=registros.get(i).getVal();
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2))
+					registros.get(i).setVal(sum1+sum2);
+			
+			Launcher.getG().actualizarRegistros(registros);
+			
+			
 
 
 			break;
@@ -245,8 +261,8 @@ public class Sim implements Runnable{
 
 
 		default:
-			System.err.println("La instrucción " + instruccion + " no es una instrucción de RISC-V o no ha sido implementada aún");
-			Launcher.getG().actualizarConsola("La instrucción " + instruccion + " no es una instrucción de RISC-V o no ha sido implementada aún");
+			System.err.println("La instruccion " + instruccion + " no es una instruccion de RISC-V o no ha sido implementada aun");
+			Launcher.getG().actualizarConsola("La instruccion " + instruccion + " no es una instruccion de RISC-V o no ha sido implementada aun");
 			break;
 		}
 

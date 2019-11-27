@@ -25,8 +25,12 @@ public class Launcher {
 	
 	public synchronized static void main(String[] args) throws IOException {
 		
-		
-		file = new File("/root/Escritorio/file");
+		try {
+			
+			file = new File("C:\\Users\\checho\\Desktop\\file");
+		} catch (Exception e) {
+			file = null;
+		}
 		
 		s = new Sim(file);
 		Thread S = new Thread(s);

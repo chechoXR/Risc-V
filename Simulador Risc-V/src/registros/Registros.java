@@ -72,6 +72,13 @@ public class Registros {
 	}
 	
 	
+	
+	public void setVal(int val) {
+		this.val = val;
+	}
+
+
+
 	@Override
 	public String toString() {
 
