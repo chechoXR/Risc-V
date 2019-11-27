@@ -60,7 +60,9 @@ public class Sim implements Runnable{
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String read = br.readLine();
 			while (read != null){
-				ejecutarInstruccion(read);
+				if(!read.trim().equals(""))
+					if(read.charAt(0)!='#')
+						ejecutarInstruccion(read);
 				read= br.readLine();
 				
 			}
@@ -83,6 +85,20 @@ public class Sim implements Runnable{
 
 		instruccion = instruccion.toUpperCase();
 		System.out.println(instruccion);
+		
+		String binary = "";
+		StringTokenizer stAux;
+		String r1;
+		String r2;
+		String r3;
+		String imm;
+		int sum1=0;
+		int sum2=0;
+		int ir1=-1;
+		int ir2=-1;
+		int ir3=-1;
+		int auxC;
+		
 		switch (instruccion) {
 		case "LUI":
 			System.out.println("Instruccion " + instruccion + " ejecutada");
@@ -160,61 +176,400 @@ public class Sim implements Runnable{
 
 			break;
 		case "ADDI":
-			StringTokenizer staux = new StringTokenizer(complemento,",");
-			String r1 = staux.nextToken();
-			String r2 = staux.nextToken();
-			String imm = staux.nextToken();
-			int sum1 = 0;
-			int sum2 = Integer.parseInt(imm);
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
 			for (int i = 0; i < registros.size(); i++) 
-				if(registros.get(i).getABI_Name().equals(r1))
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
 					sum1=registros.get(i).getVal();
+					}
 			
 			for (int i = 0; i < registros.size(); i++) 
-				if(registros.get(i).getABI_Name().equals(r2))
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
 					registros.get(i).setVal(sum1+sum2);
+					}
 			
-			Launcher.getG().actualizarRegistros(registros);
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
 			
 			
-
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 000 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
+			
+			
 
 			break;
 		case "SLTI":
 
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
+					
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
+					
+					}
+			
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
+			
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 010 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
 
 			break;
 		case "SLTIU":
 
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
+					
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
+					
+					}
+			
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
+			
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 011 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
 
 			break;
 		case "XORI":
-
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
+					
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
+					
+					}
+			
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
+			
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 100 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
 
 			break;
 		case "ORI":
 
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
+					
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
+					
+					}
+			
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
+			
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 110 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
 
 			break;
 		case "ANDI":
-
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2= stAux.nextToken();
+			imm = stAux.nextToken();
+			sum1 = 0;
+			sum2 = Integer.parseInt(imm);
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1.trim())) {
+					ir1=i;
+					
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2.trim())) {
+					ir2=i;
+					
+					}
+			
+			//Tipo I
+			imm=Integer.toBinaryString(sum2).toString();
+			if(imm.length()>12)
+				binary += imm.substring(imm.length()-12, imm.length()) + " ";
+			else
+				binary += imm + " ";
+			
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+= " 111 ";
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			
+			binary+=" 0010011";
+			
+			
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+			
 
 			break;
 		case "SLLI":
-
+			//shamt?
 
 			break;
 		case "SRLI":
+			//shamt?
 
 
 			break;
 		case "SRAI":
+			//shamt?
 
 
 			break;
 		case "ADD":
+			
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
 
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(sum1+sum2);
+					}
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
 
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 000 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
+			break;
+			
+			
+		case "SUB":
+			
+			//Tipo R
+			binary+= "0100000 "; //Function
+			
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(sum1-sum2);
+					}
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 000 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
+			
 			break;
 		case "AUB":
 
@@ -222,33 +577,426 @@ public class Sim implements Runnable{
 			break;
 		case "SLL":
 
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					}
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 001 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
+
 
 			break;
 		case "SLT":
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					}
+
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 010 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
 
 
 			break;
 		case "SLTU":
+			stAux = new StringTokenizer(complemento,",");
+			
+			r1= stAux.nextToken();
+			r2= stAux.nextToken();
+			r3= stAux.nextToken();
+			
+			
+			
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+					}
 
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(sum1>sum2?1:0);
+					}
+					
+			
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+					
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
 
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 011 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
+			
+			
 			break;
 		case "XOR":
+
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(Integer.parseInt(Integer.toBinaryString(sum1))^Integer.parseInt(Integer.toBinaryString(sum2)));
+					}
+
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 100 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
 
 
 			break;
 		case "SRL":
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+				
+					}
+
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 101 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
+
 
 
 			break;
 		case "SRA":
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					}
+
+			//Tipo R
+			binary+= "0100000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 101 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
 
 
 			break;
 		case "OR":
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(Integer.parseInt(Integer.toBinaryString(sum1))|Integer.parseInt(Integer.toBinaryString(sum2)));
+					}
+			Launcher.getG().actualizarRegistros(registros);
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 110 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
 
 
 			break;
 		case "AND":
+			
+			stAux = new StringTokenizer(complemento,",");
+			r1 = stAux.nextToken();
+			r2 = stAux.nextToken();
+			r3 = stAux.nextToken();
+			sum1 = 0;
+			sum2 = 0;
+		
+			
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r2)) {
+					ir2=i;
+					sum1=registros.get(i).getVal();
+				}
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r3)) {
+					ir3=i;
+					sum2=registros.get(i).getVal();
+					}
+
+			for (int i = 0; i < registros.size(); i++) 
+				if(registros.get(i).getABI_Name().equals(r1)) {
+					ir1=i;
+					registros.get(i).setVal(Integer.parseInt(Integer.toBinaryString(sum1))&Integer.parseInt(Integer.toBinaryString(sum2)));
+					}
+
+			
+			//Tipo R
+			binary+= "0000000 "; //Function
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir3).getRegister().substring(1)));
+			binary+= " "; 
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir2).getRegister().substring(1)));
+			
+			binary+=" 111 ";
+			
+			auxC = Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1))).length();	
+			while(auxC++<5)
+				binary+="0";
+			binary+= Integer.toBinaryString(Integer.parseInt(registros.get(ir1).getRegister().substring(1)));
+			binary+=" 0110011";
+			Launcher.getG().actualizarConsola(linea +" --> " + binary);
 
 
 			break;
@@ -267,6 +1015,7 @@ public class Sim implements Runnable{
 		}
 
 	}
+		Launcher.getG().actualizarRegistros(registros);
 		return "";
 
 	}

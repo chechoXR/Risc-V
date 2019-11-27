@@ -293,7 +293,7 @@ public class GUI extends Application implements Runnable {
 		
 		
 		Scene sc = new Scene(window);
-		st.setTitle("Staurn Risc-V");
+		st.setTitle("Staurn RISC-V");
 //		st.setResizable(false);
 //		st.setMaximized(true);
 		st.setScene(sc);
@@ -405,7 +405,7 @@ public class GUI extends Application implements Runnable {
 		console.setFont(Font.font(13));
 		console.setMaxHeight(100);
 		console.setWrapText(true);
-		actualizarConsola("Esta es la consola");	
+		//actualizarConsola("Esta es la consola");	
 	}
 	
 	/**
